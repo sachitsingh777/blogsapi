@@ -3,11 +3,11 @@ const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
 const { UserModel } = require("../models/user.model")
 const userRouter=express.Router()
- userRouter.get("/",(req,res)=>{
-    const user=UserModel.find()
-    res.send("user")
+ userRouter.get("/",async(req,res)=>{
+    const user=await UserModel.find()
+         res.status(200).send(user)
  })
-userRouter.post("/register",async(req,res)=>{
+userRouter.post("/api/register",async(req,res)=>{
       const {username,email,avatar,password}=req.body
     try{
         bcrypt.hash(password, 5, async(err, hash) =>{
@@ -16,23 +16,23 @@ userRouter.post("/register",async(req,res)=>{
            res.send("registration succesfull")
         });
     }
-    catch(err){
+    catch(error){
         res.send("not register")
     }
 })
 
-userRouter.post("/login",async(req,res)=>{
+userRouter.post("/api/login",async(req,res)=>{
     const {email,password}=req.body
-    const user=UserModel.findOne({email})
+    const user= await UserModel.findOne({email})
   try{
       if(user){
-         
+        
         bcrypt.compare(password,user.password, async(err, result)=>{
             if(result){
-                var token = jwt.sign({ username: user.username }, 'mock13');
+                var token = jwt.sign({ username: user.username,userID:user._id }, 'mock13');
                 res.status(200).send({"msg":"login succesfull","token":token})
             }else{
-                res.status(200).send({"msg:login":"succesfull","token":token})
+                res.status(200).send("wrong credentials")
             }
         });
     }
