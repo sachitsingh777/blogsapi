@@ -13,9 +13,10 @@ app.use(cors())
 app.get("/",(req,res)=>{
     res.send("home page")
 })
-app.use(auth)
-app.use("blogs",blogRouter)
 app.use("/users",userRouter)
+app.use(auth)
+app.use("/blogs",blogRouter)
+
 app.listen(process.env.port,async()=>{
     try{
            await connection
